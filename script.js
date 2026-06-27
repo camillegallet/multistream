@@ -141,7 +141,11 @@ function clearChannels() {
 function rotateChannels() {
   if (channels.length < 2) return;
 
-  // Rotate left: move first channel to the end
+  // FLIP: record current positions
+  const cards = [...streamsContainer.querySelectorAll(".stream-card")];
+  const rects = cards.map((c) => c.getBoundingClientRect());
+
+  // Rotate left
   channels.push(channels.shift());
 
   // Reorder visually with CSS order — no DOM moves, no iframe reloads
@@ -150,6 +154,36 @@ function rotateChannels() {
       `.stream-card[data-channel="${ch}"]`,
     );
     if (card) card.style.order = i;
+  });
+
+  // Reset any gridColumn override (3-stream layout)
+  cards.forEach((c) => (c.style.gridColumn = ""));
+
+  // FLIP: animate from old positions to new positions
+  requestAnimationFrame(() => {
+    cards.forEach((card, i) => {
+      const newRect = card.getBoundingClientRect();
+      const dx = rects[i].left - newRect.left;
+      const dy = rects[i].top - newRect.top;
+
+      if (dx !== 0 || dy !== 0) {
+        card.style.transition = "none";
+        card.style.transform = `translate(${dx}px, ${dy}px)`;
+
+        requestAnimationFrame(() => {
+          card.style.transition = "transform 0.35s ease";
+          card.style.transform = "";
+        });
+      }
+    });
+
+    // Clean up
+    setTimeout(() => {
+      cards.forEach((c) => {
+        c.style.transition = "";
+        c.style.transform = "";
+      });
+    }, 400);
   });
 
   syncState();
