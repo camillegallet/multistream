@@ -235,7 +235,8 @@ iframe {
 }
 
 .chat-frame.hidden {
-  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* ==========================
