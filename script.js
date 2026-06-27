@@ -1,0 +1,516 @@
+// ======================================================
+// MultiStream
+// Part 1 - Initialization & Channel Management
+// ======================================================
+
+const STORAGE_KEY = "multistream_channels";
+
+const streamsContainer = document.getElementById("streams");
+const template = document.getElementById("streamTemplate");
+
+const channelForm = document.getElementById("channelForm");
+const channelInput = document.getElementById("channelInput");
+
+const copyLinkBtn = document.getElementById("copyLink");
+const clearBtn = document.getElementById("clearAll");
+const toggleChatBtn = document.getElementById("toggleChat");
+const rotateBtn = document.getElementById("rotateStreams");
+
+let channels = [];
+let activeChannel = null;
+
+// ======================================================
+// Utilities
+// ======================================================
+
+function normalizeChannel(name) {
+  return name.trim().toLowerCase().replace(/^@/, "");
+}
+
+function unique(array) {
+  return [...new Set(array)];
+}
+
+// ======================================================
+// Storage
+// ======================================================
+
+function saveChannels() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(channels));
+}
+
+function loadChannels() {
+  // Read from path: /streamer1/streamer2
+  const fromPath = location.pathname
+    .split("/")
+    .filter(Boolean)
+    .map(normalizeChannel)
+    .filter(Boolean);
+
+  if (fromPath.length > 0) return unique(fromPath);
+
+  // Fallback: localStorage
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) return [];
+
+  try {
+    return unique(JSON.parse(saved));
+  } catch {
+    return [];
+  }
+}
+
+// ======================================================
+// URL
+// ======================================================
+
+function updateURL() {
+  const path = channels.length === 0 ? "/" : "/" + channels.join("/");
+
+  history.replaceState({}, "", path);
+}
+
+// ======================================================
+// Rendering
+// ======================================================
+
+function render() {
+  streamsContainer.innerHTML = "";
+
+  channels.forEach((channel) => {
+    createStreamCard(channel);
+  });
+
+  syncState();
+}
+
+// ======================================================
+// State sync (shared after add/remove/rotate)
+// ======================================================
+
+function syncState() {
+  updateGrid();
+  saveChannels();
+  updateURL();
+  populateChatChannelSelect();
+  rebuildChatFrames();
+}
+
+// ======================================================
+// Channel Management (surgical – no full rebuild)
+// ======================================================
+
+function addChannels(list) {
+  const incoming = list.split(",").map(normalizeChannel).filter(Boolean);
+
+  incoming.forEach((ch) => {
+    if (!channels.includes(ch)) {
+      channels.push(ch);
+      createStreamCard(ch);
+    }
+  });
+
+  syncState();
+}
+
+function removeChannel(channel) {
+  channels = channels.filter((c) => c !== channel);
+
+  const card = streamsContainer.querySelector(
+    `.stream-card[data-channel="${channel}"]`,
+  );
+  if (card) card.remove();
+
+  syncState();
+}
+
+function clearChannels() {
+  if (!confirm("Remove every stream?")) return;
+
+  channels = [];
+
+  streamsContainer.innerHTML = "";
+
+  syncState();
+}
+
+function rotateChannels() {
+  if (channels.length < 2) return;
+
+  // Rotate left: move first channel to the end
+  channels.push(channels.shift());
+
+  // Reorder visually with CSS order — no DOM moves, no iframe reloads
+  channels.forEach((ch, i) => {
+    const card = streamsContainer.querySelector(
+      `.stream-card[data-channel="${ch}"]`,
+    );
+    if (card) card.style.order = i;
+  });
+
+  syncState();
+}
+
+// ======================================================
+// Events
+// ======================================================
+
+channelForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  if (!channelInput.value.trim()) return;
+
+  addChannels(channelInput.value);
+
+  channelInput.value = "";
+
+  channelInput.focus();
+});
+
+clearBtn.addEventListener("click", clearChannels);
+
+rotateBtn.addEventListener("click", rotateChannels);
+
+copyLinkBtn.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(location.href);
+
+    copyLinkBtn.textContent = "✅ Copied";
+
+    setTimeout(() => {
+      copyLinkBtn.textContent = "🔗 Share";
+    }, 1500);
+  } catch {
+    alert(location.href);
+  }
+});
+
+toggleChatBtn.addEventListener("click", () => {
+  if (!globalChat) return;
+
+  const isHidden = globalChat.classList.contains("hidden");
+
+  if (isHidden) {
+    const target = activeChannel || channels[0];
+    if (target) {
+      showChatFrame(target);
+    }
+  }
+
+  globalChat.classList.toggle("hidden");
+
+  syncChatLayout();
+});
+
+// ======================================================
+// CHANNEL SELECTOR FOR GLOBAL CHAT
+// ======================================================
+
+const chatChannelSelect = document.getElementById("chatChannelSelect");
+
+function populateChatChannelSelect() {
+  if (!chatChannelSelect) return;
+
+  const currentValue = chatChannelSelect.value;
+
+  chatChannelSelect.innerHTML =
+    '<option value="">— Select a channel —</option>';
+
+  channels.forEach((channel) => {
+    const opt = document.createElement("option");
+    opt.value = channel;
+    opt.textContent = channel;
+    chatChannelSelect.appendChild(opt);
+  });
+
+  // Restore or set to active/first channel
+  if (currentValue && channels.includes(currentValue)) {
+    chatChannelSelect.value = currentValue;
+  } else if (activeChannel && channels.includes(activeChannel)) {
+    chatChannelSelect.value = activeChannel;
+  } else if (channels.length > 0) {
+    chatChannelSelect.value = channels[0];
+  }
+}
+
+chatChannelSelect.addEventListener("change", () => {
+  const channel = chatChannelSelect.value;
+  if (!channel) return;
+
+  showChatFrame(channel);
+
+  activeChannel = channel;
+
+  globalChat.classList.remove("hidden");
+
+  syncChatLayout();
+});
+
+// ======================================================
+// PRELOAD ALL CHAT FRAMES – SWAP VISIBILITY
+// ======================================================
+
+const chatFramesContainer = document.getElementById("chatFramesContainer");
+
+function rebuildChatFrames() {
+  if (!chatFramesContainer) return;
+
+  const existing = [...chatFramesContainer.querySelectorAll(".chat-frame")];
+  const existingChannels = existing.map((f) => f.dataset.channel);
+
+  // Add frames for new channels
+  channels.forEach((channel) => {
+    if (!existingChannels.includes(channel)) {
+      const frame = document.createElement("iframe");
+      frame.className = "chat-frame hidden";
+      frame.dataset.channel = channel;
+      frame.src = `https://www.twitch.tv/embed/${channel}/chat?${twitchParents()}`;
+      chatFramesContainer.appendChild(frame);
+    }
+  });
+
+  // Remove frames for deleted channels
+  existing.forEach((frame) => {
+    if (!channels.includes(frame.dataset.channel)) {
+      frame.remove();
+    }
+  });
+}
+
+function showChatFrame(channel) {
+  if (!chatFramesContainer) return;
+
+  chatFramesContainer
+    .querySelectorAll(".chat-frame")
+    .forEach((f) => f.classList.add("hidden"));
+
+  const target = chatFramesContainer.querySelector(
+    `.chat-frame[data-channel="${channel}"]`,
+  );
+  if (target) {
+    target.classList.remove("hidden");
+  }
+}
+
+function syncChatLayout() {
+  const mainEl = document.querySelector("main");
+  if (!mainEl || !globalChat) return;
+
+  mainEl.classList.toggle(
+    "chat-open",
+    !globalChat.classList.contains("hidden"),
+  );
+}
+
+// ======================================================
+// Responsive Grid
+// ======================================================
+
+function updateGrid() {
+  const count = channels.length;
+
+  let cols = 1;
+
+  if (count === 1) cols = 1;
+  else if (count === 2) cols = 2;
+  else if (count <= 4) cols = 2;
+  else if (count <= 9) cols = 3;
+  else cols = Math.ceil(Math.sqrt(count));
+
+  streamsContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+}
+
+// ======================================================
+// Init
+// ======================================================
+
+channels = loadChannels();
+
+render();
+
+channelInput.focus();
+
+// ======================================================
+// MultiStream
+// Part 2 - Stream Rendering (Twitch Iframes)
+// ======================================================
+
+function twitchParents() {
+  const hosts = ["localhost"];
+
+  if (
+    location.hostname &&
+    location.hostname !== "localhost" &&
+    location.hostname !== "127.0.0.1"
+  ) {
+    hosts.push(location.hostname);
+  }
+
+  return hosts.map((h) => `parent=${encodeURIComponent(h)}`).join("&");
+}
+
+// ======================================================
+// FULLSCREEN
+// ======================================================
+
+function toggleFullscreen(card) {
+  const isFull = card.classList.contains("fullscreen");
+
+  document
+    .querySelectorAll(".stream-card")
+    .forEach((c) => c.classList.remove("fullscreen"));
+
+  if (!isFull) {
+    card.classList.add("fullscreen");
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+
+  document
+    .querySelectorAll(".stream-card")
+    .forEach((card) => card.classList.remove("fullscreen"));
+});
+
+// ======================================================
+// STREAM CARD
+// ======================================================
+
+const playerBase = "https://player.twitch.tv/?channel=";
+const chatBase = "https://www.twitch.tv/embed/";
+
+function createStreamCard(channel) {
+  const node = template.content.cloneNode(true);
+
+  const card = node.querySelector(".stream-card");
+  const title = node.querySelector(".channel-name");
+  const player = node.querySelector(".player");
+  const removeBtn = node.querySelector(".remove-btn");
+  const fullscreenBtn = node.querySelector(".fullscreen-btn");
+  const reloadBtn = node.querySelector(".reload-btn");
+
+  title.textContent = channel;
+  card.dataset.channel = channel;
+
+  player.src = `${playerBase}${channel}&${twitchParents()}&autoplay=true&muted=true`;
+
+  // Reload
+  reloadBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const src = player.src;
+    player.src = "";
+    setTimeout(() => (player.src = src), 100);
+  });
+
+  // Open chat on click
+  card.addEventListener("click", () => openChat(channel));
+
+  // Remove
+  removeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    removeChannel(channel);
+  });
+
+  // Fullscreen
+  fullscreenBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleFullscreen(card);
+  });
+
+  card.addEventListener("dblclick", () => toggleFullscreen(card));
+
+  // Hover highlight
+  card.addEventListener("mouseenter", () => {
+    card.style.borderColor = "#9147ff";
+  });
+  card.addEventListener("mouseleave", () => {
+    card.style.borderColor = "#2d2d35";
+  });
+
+  // Error handling
+  player.addEventListener("error", () => {
+    console.warn("Stream failed:", channel);
+    player.style.opacity = "0.5";
+    player.title = "Stream unavailable";
+  });
+
+  streamsContainer.appendChild(node);
+}
+
+// ======================================================
+// RENDER (with fullscreen cleanup + URL update)
+// ======================================================
+
+const _origRender = render;
+
+render = function () {
+  document
+    .querySelectorAll(".stream-card")
+    .forEach((c) => c.classList.remove("fullscreen"));
+
+  _origRender();
+
+  // Update URL after render (chained after syncState)
+  const path = channels.length === 0 ? "/" : "/" + channels.join("/");
+
+  history.replaceState({}, "", path);
+};
+
+// ======================================================
+// HOTKEYS (1–9 focus stream)
+// ======================================================
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT") return;
+
+  const num = parseInt(e.key, 10);
+
+  if (isNaN(num) || num < 1 || num > 9) return;
+
+  const cards = document.querySelectorAll(".stream-card");
+
+  const index = num - 1;
+
+  if (!cards[index]) return;
+
+  cards[index].scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+
+  cards.forEach((c) => c.classList.remove("focused"));
+
+  cards[index].classList.add("focused");
+});
+
+// ======================================================
+
+// SAVE ON UNLOAD (extra safety)
+// ======================================================
+
+window.addEventListener("beforeunload", () => {
+  saveChannels();
+});
+
+const globalChat = document.getElementById("globalChat");
+
+function openChat(channel) {
+  if (!globalChat) return;
+
+  showChatFrame(channel);
+
+  globalChat.classList.remove("hidden");
+
+  activeChannel = channel;
+
+  if (chatChannelSelect) {
+    chatChannelSelect.value = channel;
+  }
+
+  syncChatLayout();
+}
+
+// Expose openChat globally so stream cards can use it
+window.openChat = openChat;

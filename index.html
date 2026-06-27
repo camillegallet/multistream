@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <title>MultiStream Clone</title>
+
+    <link rel="stylesheet" href="/style.css" />
+
+    <meta name="theme-color" content="#0e0e10" />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="logo">🎮 MultiStream</div>
+
+      <form id="channelForm" autocomplete="off">
+        <input
+          id="channelInput"
+          type="text"
+          placeholder="Add channels (e.g. xqc, shroud, asmongold)"
+        />
+
+        <button type="submit">Add</button>
+      </form>
+
+      <div class="toolbar">
+        <button id="toggleChat">💬 Chat</button>
+
+        <button id="rotateStreams" title="Rotate streams">🔄</button>
+
+        <button id="copyLink">🔗 Share</button>
+
+        <button id="clearAll">🗑 Clear</button>
+      </div>
+    </header>
+
+    <!-- MAIN GRID AREA (must fill screen like MultiStream.am) -->
+    <main class="main">
+      <section id="streams" class="streams-grid"></section>
+    </main>
+
+    <!-- STREAM TEMPLATE -->
+    <template id="streamTemplate">
+      <article class="stream-card">
+        <header class="stream-header">
+          <span class="channel-name"></span>
+
+          <div class="actions">
+            <button class="fullscreen-btn" title="Fullscreen">⛶</button>
+
+            <button class="reload-btn" title="Reload">↻</button>
+
+            <button class="remove-btn" title="Remove">✕</button>
+          </div>
+        </header>
+
+        <div class="player-container">
+          <iframe
+            class="player"
+            allow="autoplay; fullscreen"
+            allowfullscreen
+            frameborder="0"
+            scrolling="no"
+          ></iframe>
+        </div>
+      </article>
+    </template>
+
+    <div id="globalChat" class="global-chat hidden">
+      <div class="global-chat-header">
+        <select id="chatChannelSelect">
+          <option value="">— Select a channel —</option>
+        </select>
+      </div>
+      <div id="chatFramesContainer" class="chat-frames-container"></div>
+    </div>
+
+    <script src="/script.js"></script>
+  </body>
+</html>

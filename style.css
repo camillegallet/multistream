@@ -1,0 +1,315 @@
+/* ==========================
+   RESET
+========================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #0e0e10;
+  color: #efeff1;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+main {
+  flex: 1;
+  height: calc(100vh - 64px);
+  min-height: 0;
+
+  transition: padding-right 0.2s ease;
+}
+
+main.chat-open {
+  padding-right: 340px;
+}
+
+/* ==========================
+   TOP BAR
+========================== */
+
+.topbar {
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: 0 20px;
+
+  background: #18181b;
+
+  border-bottom: 1px solid #2b2b31;
+
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.streams-grid {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+
+  gap: 0;
+
+  grid-template-columns: 1fr; /* FORCE SINGLE COLUMN */
+
+  overflow: hidden;
+}
+
+.stream-card {
+  position: relative;
+
+  width: 100% !important;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: black;
+
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0; /* CRITICAL for width bugs */
+  min-height: 0; /* CRITICAL for height bugs */
+}
+
+.streams-grid > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+.player-container {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+.player {
+  display: block;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  border: 0;
+
+  position: absolute;
+  inset: 0;
+}
+
+.chat-container {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  height: 100%;
+  width: 340px;
+
+  z-index: 10;
+
+  background: #18181b;
+
+  border-left: 1px solid #2d2d35;
+}
+
+.chat {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+iframe {
+  max-width: none !important;
+}
+
+.global-chat {
+  position: fixed;
+  top: 64px;
+  right: 0;
+
+  width: 340px;
+  height: calc(100vh - 64px);
+
+  background: #18181b;
+
+  border-left: 1px solid #2d2d35;
+
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.global-chat-header {
+  flex-shrink: 0;
+
+  padding: 8px 12px;
+
+  background: #1f1f23;
+
+  border-bottom: 1px solid #2d2d35;
+}
+
+#chatChannelSelect {
+  width: 100%;
+
+  padding: 6px 8px;
+
+  background: #18181b;
+
+  color: #efeff1;
+
+  border: 1px solid #3a3a3d;
+
+  border-radius: 4px;
+
+  font-size: 13px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: auto;
+}
+
+#chatChannelSelect:focus {
+  border-color: #9147ff;
+}
+
+.chat-frames-container {
+  flex: 1;
+
+  position: relative;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.chat-frame {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  border: 0;
+}
+
+.chat-frame.hidden {
+  display: none !important;
+}
+
+/* ==========================
+   STREAM CARD HEADER
+========================== */
+
+.stream-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 6px 10px;
+
+  background: #1f1f23;
+
+  border-bottom: 1px solid #2d2d35;
+
+  flex-shrink: 0;
+}
+
+.channel-name {
+  font-size: 13px;
+  font-weight: 600;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+
+  flex-shrink: 0;
+}
+
+.actions button {
+  background: none;
+
+  border: none;
+
+  color: #adadb8;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  line-height: 1;
+
+  padding: 2px 4px;
+
+  border-radius: 3px;
+
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.actions button:hover {
+  color: #efeff1;
+
+  background: #3a3a3d;
+}
+
+.remove-btn:hover {
+  color: #eb0400 !important;
+}
+
+.reload-btn:hover {
+  color: #9147ff !important;
+}
+
+.hidden {
+  display: none !important;
+}
