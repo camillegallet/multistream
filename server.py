@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     server = http.server.HTTPServer((host, port), SPAHandler)
     print(f"→ Serving at http://{host}:{port}")
-    print(f"→ Try  http://{host}:{port}/niniste/isayaya")
+    print(f"→ Try  http://{host}:{port}/niniste/devgirl_")
 
     try:
         server.serve_forever()
