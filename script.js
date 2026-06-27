@@ -19,6 +19,8 @@ const rotateBtn = document.getElementById("rotateStreams");
 let channels = [];
 let activeChannel = null;
 
+const playerBase = "https://player.twitch.tv/?channel=";
+
 // ======================================================
 // Utilities
 // ======================================================
@@ -41,6 +43,7 @@ function saveChannels() {
 
 function loadChannels() {
   // Read from path: /streamer1/streamer2
+  // (requires a server with SPA fallback, like server.py)
   const fromPath = location.pathname
     .split("/")
     .filter(Boolean)
@@ -265,7 +268,7 @@ function rebuildChatFrames() {
       const frame = document.createElement("iframe");
       frame.className = "chat-frame hidden";
       frame.dataset.channel = channel;
-      frame.src = `https://www.twitch.tv/embed/${channel}/chat?${twitchParents()}`;
+      frame.src = `https://www.twitch.tv/embed/${channel}/chat?${twitchParents()}&darkpopout`;
       chatFramesContainer.appendChild(frame);
     }
   });
@@ -378,9 +381,6 @@ document.addEventListener("keydown", (e) => {
 // STREAM CARD
 // ======================================================
 
-const playerBase = "https://player.twitch.tv/?channel=";
-const chatBase = "https://www.twitch.tv/embed/";
-
 function createStreamCard(channel) {
   const node = template.content.cloneNode(true);
 
@@ -440,7 +440,7 @@ function createStreamCard(channel) {
 }
 
 // ======================================================
-// RENDER (with fullscreen cleanup + URL update)
+// RENDER (with fullscreen cleanup)
 // ======================================================
 
 const _origRender = render;
@@ -451,11 +451,6 @@ render = function () {
     .forEach((c) => c.classList.remove("fullscreen"));
 
   _origRender();
-
-  // Update URL after render (chained after syncState)
-  const path = channels.length === 0 ? "/" : "/" + channels.join("/");
-
-  history.replaceState({}, "", path);
 };
 
 // ======================================================
