@@ -547,6 +547,12 @@ function createStreamCard(channel) {
     channel = newName;
 
     syncState();
+
+    // Show the new channel's chat if chat panel is open
+    if (globalChat && !globalChat.classList.contains("hidden")) {
+      showChatFrame(newName);
+      if (chatChannelSelect) chatChannelSelect.value = newName;
+    }
   });
 
   // Cancel on Escape
