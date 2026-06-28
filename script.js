@@ -480,6 +480,97 @@ function createStreamCard(channel) {
     toggleFullscreen(card);
   });
 
+  // Rename
+  const editBtn = node.querySelector(".edit-btn");
+  const renameForm = node.querySelector(".rename-form");
+  const renameInput = node.querySelector(".rename-input");
+
+  // Stop clicks on form elements from bubbling to card (which opens chat)
+  renameForm.addEventListener("click", (e) => e.stopPropagation());
+  renameInput.addEventListener("click", (e) => e.stopPropagation());
+
+  editBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    title.classList.add("hidden");
+    editBtn.classList.add("hidden");
+    renameForm.classList.remove("hidden");
+    renameInput.value = channel;
+    renameInput.focus();
+    renameInput.select();
+  });
+
+  renameForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const newName = normalizeChannel(renameInput.value);
+    if (!newName || newName === channel) {
+      // Cancel if empty or unchanged
+      title.classList.remove("hidden");
+      editBtn.classList.remove("hidden");
+      renameForm.classList.add("hidden");
+      return;
+    }
+
+    const oldName = channel;
+
+    // Prevent duplicates
+    if (channels.includes(newName) && newName !== oldName) {
+      renameInput.focus();
+      renameInput.select();
+      return;
+    }
+
+    // Update channels array
+    const idx = channels.indexOf(oldName);
+    if (idx !== -1) {
+      channels[idx] = newName;
+    }
+
+    // Update card
+    card.dataset.channel = newName;
+    title.textContent = newName;
+
+    // Update iframe
+    player.src = `${playerBase}${newName}&${twitchParents()}&autoplay=true&muted=true`;
+
+    // Restore view
+    title.classList.remove("hidden");
+    editBtn.classList.remove("hidden");
+    renameForm.classList.add("hidden");
+
+    // Update active channel reference
+    if (activeChannel === oldName) {
+      activeChannel = newName;
+    }
+
+    channel = newName;
+
+    syncState();
+  });
+
+  // Cancel on Escape
+  renameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      title.classList.remove("hidden");
+      editBtn.classList.remove("hidden");
+      renameForm.classList.add("hidden");
+    }
+  });
+
+  // Cancel on blur (clicking outside)
+  renameInput.addEventListener("blur", () => {
+    // Small delay so submit button click registers first
+    setTimeout(() => {
+      if (!renameForm.classList.contains("hidden")) {
+        title.classList.remove("hidden");
+        editBtn.classList.remove("hidden");
+        renameForm.classList.add("hidden");
+      }
+    }, 150);
+  });
+
   card.addEventListener("dblclick", () => toggleFullscreen(card));
 
   // Hover highlight
