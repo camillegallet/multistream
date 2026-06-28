@@ -314,3 +314,36 @@ iframe {
 .hidden {
   display: none !important;
 }
+
+/* ==========================
+   FULLSCREEN
+========================== */
+
+.stream-card.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #000;
+}
+
+.stream-card.fullscreen .stream-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: rgba(31, 31, 35, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.stream-card.fullscreen .player-container {
+  position: absolute;
+  inset: 0;
+}
+
+.stream-card.fullscreen .player {
+  width: 100% !important;
+  height: 100% !important;
+}
