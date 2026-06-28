@@ -489,6 +489,15 @@ function createStreamCard(channel) {
   renameForm.addEventListener("click", (e) => e.stopPropagation());
   renameInput.addEventListener("click", (e) => e.stopPropagation());
 
+  // Normalize URL pastes in rename input
+  renameInput.addEventListener("input", () => {
+    const raw = renameInput.value.trim();
+    const normalized = normalizeChannel(raw);
+    if (normalized !== raw) {
+      renameInput.value = normalized;
+    }
+  });
+
   editBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     title.classList.add("hidden");
