@@ -26,7 +26,12 @@ const playerBase = "https://player.twitch.tv/?channel=";
 // ======================================================
 
 function normalizeChannel(name) {
-  return name.trim().toLowerCase().replace(/^@/, "");
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/^@/, "")
+    .replace(/^(https?:\/\/)?(www\.)?twitch\.tv\//, "")
+    .split(/[/?#]/)[0];
 }
 
 function unique(array) {
@@ -192,6 +197,15 @@ function rotateChannels() {
 // ======================================================
 // Events
 // ======================================================
+
+// Normalize input in-place when a URL is pasted or typed
+channelInput.addEventListener("input", () => {
+  const raw = channelInput.value.trim();
+  const normalized = normalizeChannel(raw);
+  if (normalized !== raw) {
+    channelInput.value = normalized;
+  }
+});
 
 channelForm.addEventListener("submit", (e) => {
   e.preventDefault();

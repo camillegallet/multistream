@@ -68,6 +68,18 @@ main.chat-open {
   flex-shrink: 0;
 }
 
+.toolbar button {
+  border-radius: 6px;
+}
+
+#channelForm button {
+  border-radius: 6px;
+}
+
+#channelForm input {
+  border-radius: 6px;
+}
+
 .logo {
   font-size: 22px;
   font-weight: 700;
