@@ -372,9 +372,14 @@ function updateGrid() {
 
   streamsContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-  // For special layouts: first card spans full row
+  // For special layouts
   const cards = [...streamsContainer.querySelectorAll(".stream-card")];
-  cards.forEach((c) => (c.style.gridColumn = ""));
+  cards.forEach((c) => {
+    c.style.gridColumn = "";
+    c.style.gridRow = "";
+    c.style.gridArea = "";
+  });
+  streamsContainer.style.gridTemplateAreas = "";
 
   if (count === 3 || count === 4) {
     // Sort by visual order (CSS order property, set by rotateChannels)
@@ -384,6 +389,20 @@ function updateGrid() {
     cards[0].style.gridColumn = "1 / -1";
     // Second row gets smaller height
     streamsContainer.style.gridTemplateRows = "1fr 0.55fr";
+  } else if (count === 5) {
+    // 2 centered on first row, 3 on second row
+    cards.sort(
+      (a, b) => (parseInt(a.style.order) || 0) - (parseInt(b.style.order) || 0),
+    );
+    // Row 1: items at columns 2 and 3
+    // Row 2: items fill all 3 columns
+    streamsContainer.style.gridTemplateAreas = '" .  A  B" " C  D  E "';
+    cards[0].style.gridArea = "A";
+    cards[1].style.gridArea = "B";
+    cards[2].style.gridArea = "C";
+    cards[3].style.gridArea = "D";
+    cards[4].style.gridArea = "E";
+    streamsContainer.style.gridTemplateRows = "";
   } else {
     streamsContainer.style.gridTemplateRows = "";
   }
