@@ -382,6 +382,10 @@ function updateGrid() {
       (a, b) => (parseInt(a.style.order) || 0) - (parseInt(b.style.order) || 0),
     );
     cards[0].style.gridColumn = "1 / -1";
+    // Second row gets smaller height
+    streamsContainer.style.gridTemplateRows = "1fr 0.55fr";
+  } else {
+    streamsContainer.style.gridTemplateRows = "";
   }
 }
 
