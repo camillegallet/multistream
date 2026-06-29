@@ -72,6 +72,11 @@ main.chat-open {
   border-radius: 6px;
 }
 
+.rotate-icon {
+  display: inline-block;
+  transform: scaleY(-1);
+}
+
 #channelForm button {
   border-radius: 6px;
 }
