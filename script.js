@@ -422,6 +422,12 @@ channels = loadChannels();
 
 render();
 
+// Show first channel's chat frame by default
+if (channels.length > 0) {
+  showChatFrame(channels[0]);
+  activeChannel = channels[0];
+}
+
 channelInput.focus();
 
 // ======================================================
