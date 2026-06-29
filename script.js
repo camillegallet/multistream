@@ -120,6 +120,12 @@ function addChannels(list) {
   });
 
   syncState();
+
+  // Show chat frame for the selected channel if chat panel is visible
+  if (chatChannelSelect && chatChannelSelect.value) {
+    showChatFrame(chatChannelSelect.value);
+    activeChannel = chatChannelSelect.value;
+  }
 }
 
 function removeChannel(channel) {
