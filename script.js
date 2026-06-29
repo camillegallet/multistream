@@ -390,18 +390,24 @@ function updateGrid() {
     // Second row gets smaller height
     streamsContainer.style.gridTemplateRows = "1fr 0.55fr";
   } else if (count === 5) {
-    // 2 centered on first row, 3 on second row
+    // 2 centered on first row, 3 fill full width on second row
+    cols = 6;
+    streamsContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     cards.sort(
       (a, b) => (parseInt(a.style.order) || 0) - (parseInt(b.style.order) || 0),
     );
-    // Row 1: items at columns 2 and 3
-    // Row 2: items fill all 3 columns
-    streamsContainer.style.gridTemplateAreas = '" .  A  B" " C  D  E "';
-    cards[0].style.gridArea = "A";
-    cards[1].style.gridArea = "B";
-    cards[2].style.gridArea = "C";
-    cards[3].style.gridArea = "D";
-    cards[4].style.gridArea = "E";
+    // Row 1: items span 2 columns each (same width as bottom row)
+    cards[0].style.gridColumn = "2 / span 2";
+    cards[0].style.gridRow = "1";
+    cards[1].style.gridColumn = "4 / span 2";
+    cards[1].style.gridRow = "1";
+    // Row 2: each item spans 2 columns to fill full width
+    cards[2].style.gridColumn = "1 / span 2";
+    cards[2].style.gridRow = "2";
+    cards[3].style.gridColumn = "3 / span 2";
+    cards[3].style.gridRow = "2";
+    cards[4].style.gridColumn = "5 / span 2";
+    cards[4].style.gridRow = "2";
     streamsContainer.style.gridTemplateRows = "";
   } else {
     streamsContainer.style.gridTemplateRows = "";
