@@ -366,17 +366,17 @@ function updateGrid() {
   if (count === 1) cols = 1;
   else if (count === 2) cols = 2;
   else if (count === 3) cols = 2;
-  else if (count <= 4) cols = 2;
+  else if (count === 4) cols = 3;
   else if (count <= 9) cols = 3;
   else cols = Math.ceil(Math.sqrt(count));
 
   streamsContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-  // For 3 streams: first visually first card spans full row
+  // For special layouts: first card spans full row
   const cards = [...streamsContainer.querySelectorAll(".stream-card")];
   cards.forEach((c) => (c.style.gridColumn = ""));
 
-  if (count === 3) {
+  if (count === 3 || count === 4) {
     // Sort by visual order (CSS order property, set by rotateChannels)
     cards.sort(
       (a, b) => (parseInt(a.style.order) || 0) - (parseInt(b.style.order) || 0),
