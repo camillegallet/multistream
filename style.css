@@ -93,6 +93,15 @@ main.chat-open {
 
 #channelForm input {
   border-radius: 6px;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 0;
+  background: #18181b;
+  color: #efeff1;
+  outline: none;
+  box-sizing: border-box;
+  border: 1px solid #2d2d35;
 }
 
 .logo {
