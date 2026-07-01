@@ -109,8 +109,13 @@ function syncState() {
 
 function toggleEmptyState() {
   const emptyState = document.getElementById("emptyState");
-  if (!emptyState) return;
-  emptyState.classList.toggle("hidden", channels.length > 0);
+  const streams = document.getElementById("streams");
+  if (!emptyState || !streams) return;
+
+  const hasChannels = channels.length > 0;
+
+  emptyState.classList.toggle("hidden", hasChannels);
+  streams.classList.toggle("hidden", !hasChannels);
 }
 
 // ======================================================
