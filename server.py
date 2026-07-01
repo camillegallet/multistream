@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Dev server with SPA fallback — serves index.html for unknown paths."""
 
 import http.server
@@ -24,7 +24,6 @@ if __name__ == "__main__":
 
     server = http.server.HTTPServer((host, port), SPAHandler)
     print(f"→ Serving at http://{host}:{port}")
-    print(f"→ Try  http://{host}:{port}/niniste/devgirl_")
 
     try:
         server.serve_forever()
