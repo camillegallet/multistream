@@ -1,4 +1,4 @@
-# multistream
+# MultiStream
 A lightweight web application for watching multiple Twitch streams simultaneously in a responsive grid.
 
 ## Getting Started

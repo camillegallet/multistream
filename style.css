@@ -112,7 +112,7 @@ main.chat-open {
   height: 28px;
   background: #3a3a3d;
   border-radius: 2px;
-  margin-right: 4px;
+  margin-left: -10px;
 }
 
 .toolbar button {
