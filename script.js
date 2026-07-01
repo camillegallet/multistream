@@ -53,7 +53,8 @@ function loadChannels() {
     .split("/")
     .filter(Boolean)
     .map(normalizeChannel)
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((ch) => ch !== "multistream");
 
   if (fromPath.length > 0) return unique(fromPath);
 
