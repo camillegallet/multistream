@@ -112,7 +112,8 @@ main.chat-open {
   height: 28px;
   background: #3a3a3d;
   border-radius: 2px;
-  margin-left: -10px;
+  margin-left: -4px;
+  margin-right: 6px;
 }
 
 .toolbar button {
@@ -386,6 +387,8 @@ iframe {
   border-bottom: 1px solid #2d2d35;
 
   flex-shrink: 0;
+
+  border: 1px solid #52525b;
 }
 
 .channel-name {
