@@ -97,6 +97,7 @@ main.chat-open {
 .topbar .logo img {
   height: 32px;
   width: auto;
+  border-radius: 6px;
 }
 
 .toolbar {
