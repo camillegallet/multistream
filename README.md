@@ -17,7 +17,7 @@ The application will be available at:
 http://localhost:8080
 ```
 
-Open the URL in your browser to use MultiTwitch locally.
+Open the URL in your browser to use MultiStream locally.
 
 ## License
 

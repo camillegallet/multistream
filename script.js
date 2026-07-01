@@ -103,6 +103,14 @@ function syncState() {
   updateURL();
   populateChatChannelSelect();
   rebuildChatFrames();
+  lucide.createIcons();
+  toggleEmptyState();
+}
+
+function toggleEmptyState() {
+  const emptyState = document.getElementById("emptyState");
+  if (!emptyState) return;
+  emptyState.classList.toggle("hidden", channels.length > 0);
 }
 
 // ======================================================
