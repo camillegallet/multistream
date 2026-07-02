@@ -159,7 +159,7 @@ main.chat-open {
 #channelForm button {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   color: white;
   cursor: pointer;
 
@@ -177,7 +177,7 @@ main.chat-open {
 
   transition: all 0.3s ease;
 
-  padding: 8px 20px;
+  padding: 8px 14px 8px 10px;
   height: 34px;
 }
 
