@@ -164,7 +164,6 @@ main.chat-open {
   cursor: pointer;
 
   background: rgba(255, 255, 255, 0.15);
-
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
@@ -172,7 +171,6 @@ main.chat-open {
   border-left: none;
 
   border-radius: 0 40px 40px 0;
-
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
   transition: all 0.3s ease;
