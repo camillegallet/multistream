@@ -247,10 +247,12 @@ copyLinkBtn.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(location.href);
 
-    copyLinkBtn.textContent = "✅ Copied";
+    copyLinkBtn.innerHTML = '<i data-lucide="check"></i><span>Copied</span>';
+    if (window.lucide) lucide.createIcons();
 
     setTimeout(() => {
-      copyLinkBtn.textContent = "🔗 Share";
+      copyLinkBtn.innerHTML = '<i data-lucide="share-2"></i><span>Share</span>';
+      if (window.lucide) lucide.createIcons();
     }, 1500);
   } catch {
     alert(location.href);
