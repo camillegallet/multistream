@@ -437,15 +437,91 @@ function updateGrid() {
 }
 
 // ======================================================
-// Init
+// TomSelect – Chat Channel Selector
 // ======================================================
 
-// Init TomSelect first, then render
-initTomSelect();
+let tomSelectInstance = null;
+
+function initTomSelect() {
+  if (typeof TomSelect === "undefined") {
+    console.warn("TomSelect not loaded — falling back to native select");
+    return;
+  }
+
+  if (tomSelectInstance) {
+    tomSelectInstance.destroy();
+  }
+
+  tomSelectInstance = new TomSelect("#chatChannelSelect", {
+    create: false,
+    placeholder: "— Select a channel —",
+    allowEmptyOption: true,
+    sortField: [{ field: "$order", direction: "asc" }],
+    onChange(value) {
+      if (!value) return;
+      showChatFrame(value);
+      activeChannel = value;
+      globalChat.classList.remove("hidden");
+      syncChatLayout();
+    },
+  });
+}
+
+// Override populateChatChannelSelect to sync TomSelect
+const _origPopulateChatChannelSelect = populateChatChannelSelect;
+
+populateChatChannelSelect = function () {
+  _origPopulateChatChannelSelect();
+
+  if (!tomSelectInstance) {
+    initTomSelect();
+    return;
+  }
+
+  // Sync options with TomSelect
+  tomSelectInstance.clearOptions();
+  tomSelectInstance.addOption({
+    value: "",
+    text: "— Select a channel —",
+    $order: 0,
+  });
+
+  channels.forEach((channel, i) => {
+    tomSelectInstance.addOption({
+      value: channel,
+      text: channel,
+      $order: i + 1,
+    });
+  });
+
+  tomSelectInstance.refreshOptions(false);
+
+  // Restore selected value
+  const current = chatChannelSelect.value;
+  if (current) {
+    tomSelectInstance.setValue(current, true);
+  }
+};
+
+// ======================================================
+// Init
+// ======================================================
 
 channels = loadChannels();
 
 render();
+
+function waitForTomSelect(attempts = 0) {
+  if (typeof TomSelect !== "undefined") {
+    initTomSelect();
+  } else if (attempts < 20) {
+    setTimeout(() => waitForTomSelect(attempts + 1), 50);
+  } else {
+    console.warn("TomSelect never loaded");
+  }
+}
+
+waitForTomSelect();
 
 // Show first channel's chat frame by default
 if (channels.length > 0) {
@@ -736,70 +812,3 @@ function openChat(channel) {
 
 // Expose openChat globally so stream cards can use it
 window.openChat = openChat;
-
-// ======================================================
-// TomSelect – Chat Channel Selector
-// ======================================================
-
-let tomSelectInstance = null;
-
-function initTomSelect() {
-  if (typeof TomSelect === "undefined") {
-    console.warn("TomSelect not loaded — falling back to native select");
-    return;
-  }
-
-  if (tomSelectInstance) {
-    tomSelectInstance.destroy();
-  }
-
-  tomSelectInstance = new TomSelect("#chatChannelSelect", {
-    create: false,
-    placeholder: "— Select a channel —",
-    allowEmptyOption: true,
-    sortField: [{ field: "$order", direction: "asc" }],
-    onChange(value) {
-      if (!value) return;
-      showChatFrame(value);
-      activeChannel = value;
-      globalChat.classList.remove("hidden");
-      syncChatLayout();
-    },
-  });
-}
-
-// Override populateChatChannelSelect to sync TomSelect
-const _origPopulateChatChannelSelect = populateChatChannelSelect;
-
-populateChatChannelSelect = function () {
-  _origPopulateChatChannelSelect();
-
-  if (!tomSelectInstance) {
-    initTomSelect();
-    return;
-  }
-
-  // Sync options with TomSelect
-  tomSelectInstance.clearOptions();
-  tomSelectInstance.addOption({
-    value: "",
-    text: "— Select a channel —",
-    $order: 0,
-  });
-
-  channels.forEach((channel, i) => {
-    tomSelectInstance.addOption({
-      value: channel,
-      text: channel,
-      $order: i + 1,
-    });
-  });
-
-  tomSelectInstance.refreshOptions(false);
-
-  // Restore selected value
-  const current = chatChannelSelect.value;
-  if (current) {
-    tomSelectInstance.setValue(current, true);
-  }
-};
