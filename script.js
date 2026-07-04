@@ -733,3 +733,60 @@ function openChat(channel) {
 
 // Expose openChat globally so stream cards can use it
 window.openChat = openChat;
+
+// ======================================================
+// TomSelect – Chat Channel Selector
+// ======================================================
+
+let tomSelectInstance = null;
+
+function initTomSelect() {
+  if (tomSelectInstance) {
+    tomSelectInstance.destroy();
+  }
+
+  tomSelectInstance = new TomSelect("#chatChannelSelect", {
+    create: false,
+    sortField: { field: "text", direction: "asc" },
+    placeholder: "— Select a channel —",
+    allowEmptyOption: true,
+    onChange(value) {
+      if (!value) return;
+      showChatFrame(value);
+      activeChannel = value;
+      globalChat.classList.remove("hidden");
+      syncChatLayout();
+    },
+  });
+}
+
+// Override populateChatChannelSelect to sync TomSelect
+const _origPopulateChatChannelSelect = populateChatChannelSelect;
+
+populateChatChannelSelect = function () {
+  _origPopulateChatChannelSelect();
+
+  if (!tomSelectInstance) {
+    initTomSelect();
+    return;
+  }
+
+  // Sync options with TomSelect
+  tomSelectInstance.clearOptions();
+  tomSelectInstance.addOption({ value: "", text: "— Select a channel —" });
+
+  channels.forEach((channel) => {
+    tomSelectInstance.addOption({ value: channel, text: channel });
+  });
+
+  tomSelectInstance.refreshOptions(false);
+
+  // Restore selected value
+  const current = chatChannelSelect.value;
+  if (current) {
+    tomSelectInstance.setValue(current, true);
+  }
+};
+
+// Init on load
+initTomSelect();
