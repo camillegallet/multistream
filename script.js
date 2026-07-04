@@ -747,9 +747,9 @@ function initTomSelect() {
 
   tomSelectInstance = new TomSelect("#chatChannelSelect", {
     create: false,
-    sortField: { field: "text", direction: "asc" },
     placeholder: "— Select a channel —",
     allowEmptyOption: true,
+    sortField: [{ field: "$order", direction: "asc" }],
     onChange(value) {
       if (!value) return;
       showChatFrame(value);
@@ -773,10 +773,18 @@ populateChatChannelSelect = function () {
 
   // Sync options with TomSelect
   tomSelectInstance.clearOptions();
-  tomSelectInstance.addOption({ value: "", text: "— Select a channel —" });
+  tomSelectInstance.addOption({
+    value: "",
+    text: "— Select a channel —",
+    $order: 0,
+  });
 
-  channels.forEach((channel) => {
-    tomSelectInstance.addOption({ value: channel, text: channel });
+  channels.forEach((channel, i) => {
+    tomSelectInstance.addOption({
+      value: channel,
+      text: channel,
+      $order: i + 1,
+    });
   });
 
   tomSelectInstance.refreshOptions(false);
