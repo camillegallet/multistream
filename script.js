@@ -741,6 +741,11 @@ window.openChat = openChat;
 let tomSelectInstance = null;
 
 function initTomSelect() {
+  if (typeof TomSelect === "undefined") {
+    console.warn("TomSelect not loaded — falling back to native select");
+    return;
+  }
+
   if (tomSelectInstance) {
     tomSelectInstance.destroy();
   }
