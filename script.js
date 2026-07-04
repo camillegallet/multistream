@@ -432,7 +432,8 @@ function initTomSelect() {
 
   if (tomSelectInstance) return;
 
-  tomSelectInstance = new TomSelect("#chatChannelSelect", {
+  try {
+    tomSelectInstance = new TomSelect("#chatChannelSelect", {
     create: false,
     placeholder: "— Select a channel —",
     allowEmptyOption: true,
@@ -445,6 +446,9 @@ function initTomSelect() {
       syncChatLayout();
     },
   });
+  } catch (e) {
+    console.warn("TomSelect init failed:", e);
+  }
 }
 
 // Override populateChatChannelSelect to sync TomSelect
