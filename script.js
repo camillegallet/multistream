@@ -484,9 +484,11 @@ populateChatChannelSelect = function () {
 
 channels = loadChannels();
 
-render();
-populateChatChannelSelect();
 initTomSelect();
+render();
+
+initTomSelect();
+populateChatChannelSelect();
 
 // Show first channel's chat frame by default
 if (channels.length > 0) {
