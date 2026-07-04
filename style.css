@@ -532,12 +532,12 @@ iframe {
   height: 100% !important;
 }
 
-css/* ======================================================
+/* ======================================================
    TomSelect – Liquid Glass Theme
    ====================================================== */
 
 .ts-wrapper .ts-control {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -549,6 +549,7 @@ css/* ======================================================
   transition:
     box-shadow 0.2s ease,
     border-color 0.2s ease;
+  height: 38px;
 }
 
 .ts-wrapper.focus .ts-control {
