@@ -430,9 +430,7 @@ function initTomSelect() {
     return;
   }
 
-  if (tomSelectInstance) {
-    tomSelectInstance.destroy();
-  }
+  if (tomSelectInstance) return;
 
   tomSelectInstance = new TomSelect("#chatChannelSelect", {
     create: false,
@@ -455,10 +453,7 @@ const _origPopulateChatChannelSelect = populateChatChannelSelect;
 populateChatChannelSelect = function () {
   _origPopulateChatChannelSelect();
 
-  if (!tomSelectInstance) {
-    initTomSelect();
-    return;
-  }
+  if (!tomSelectInstance) return;
 
   // Sync options with TomSelect
   tomSelectInstance.clearOptions();
@@ -492,19 +487,8 @@ populateChatChannelSelect = function () {
 
 channels = loadChannels();
 
+initTomSelect();
 render();
-
-function waitForTomSelect(attempts = 0) {
-  if (typeof TomSelect !== "undefined") {
-    initTomSelect();
-  } else if (attempts < 20) {
-    setTimeout(() => waitForTomSelect(attempts + 1), 50);
-  } else {
-    console.warn("TomSelect never loaded");
-  }
-}
-
-waitForTomSelect();
 
 // Show first channel's chat frame by default
 if (channels.length > 0) {
