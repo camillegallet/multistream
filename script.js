@@ -440,6 +440,9 @@ function updateGrid() {
 // Init
 // ======================================================
 
+// Init TomSelect first, then render
+initTomSelect();
+
 channels = loadChannels();
 
 render();
@@ -800,7 +803,3 @@ populateChatChannelSelect = function () {
     tomSelectInstance.setValue(current, true);
   }
 };
-
-document.addEventListener("DOMContentLoaded", () => {
-  initTomSelect();
-});
