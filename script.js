@@ -490,6 +490,9 @@ channels = loadChannels();
 initTomSelect();
 render();
 
+initTomSelect();
+populateChatChannelSelect();
+
 // Show first channel's chat frame by default
 if (channels.length > 0) {
   showChatFrame(channels[0]);
