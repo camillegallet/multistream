@@ -801,4 +801,6 @@ populateChatChannelSelect = function () {
   }
 };
 
-initTomSelect();
+document.addEventListener("DOMContentLoaded", () => {
+  initTomSelect();
+});
