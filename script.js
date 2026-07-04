@@ -41,15 +41,18 @@ function unique(array) {
 // ======================================================
 
 function loadChannels() {
+  // Read from path: /streamer1/streamer2
+  // (requires a server with SPA fallback, like server.py)
   return unique(
     location.pathname
       .split("/")
       .filter(Boolean)
-      .slice(1) // 👈 REMOVE "forsa"
       .map(normalizeChannel)
-      .filter(Boolean),
+      .filter(Boolean)
+      .filter((ch) => ch !== "multistream" && ch !== "index.html"),
   );
 }
+
 // ======================================================
 // URL
 // ======================================================
@@ -504,14 +507,14 @@ channelInput.focus();
 // ======================================================
 
 function twitchParents() {
-  const hosts = [];
+  const hosts = ["localhost"];
 
-  const hostname = window.location.hostname;
-
-  if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
-    hosts.push(hostname);
-  } else {
-    hosts.push("localhost");
+  if (
+    location.hostname &&
+    location.hostname !== "localhost" &&
+    location.hostname !== "127.0.0.1"
+  ) {
+    hosts.push(location.hostname);
   }
 
   return hosts.map((h) => `parent=${encodeURIComponent(h)}`).join("&");
