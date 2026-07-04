@@ -796,5 +796,14 @@ populateChatChannelSelect = function () {
   }
 };
 
-// Init on load
-initTomSelect();
+// With:
+if (typeof TomSelect !== "undefined") {
+  initTomSelect();
+} else {
+  // Wait for TomSelect to load
+  document
+    .querySelector('script[src*="tom-select"]')
+    .addEventListener("load", () => {
+      initTomSelect();
+    });
+}
