@@ -432,8 +432,7 @@ function initTomSelect() {
 
   if (tomSelectInstance) return;
 
-  try {
-    tomSelectInstance = new TomSelect("#chatChannelSelect", {
+  tomSelectInstance = new TomSelect("#chatChannelSelect", {
     create: false,
     placeholder: "— Select a channel —",
     allowEmptyOption: true,
@@ -446,9 +445,6 @@ function initTomSelect() {
       syncChatLayout();
     },
   });
-  } catch (e) {
-    console.warn("TomSelect init failed:", e);
-  }
 }
 
 // Override populateChatChannelSelect to sync TomSelect
@@ -511,17 +507,7 @@ channelInput.focus();
 // ======================================================
 
 function twitchParents() {
-  const hosts = ["localhost"];
-
-  if (
-    location.hostname &&
-    location.hostname !== "localhost" &&
-    location.hostname !== "127.0.0.1"
-  ) {
-    hosts.push(location.hostname);
-  }
-
-  return hosts.map((h) => `parent=${encodeURIComponent(h)}`).join("&");
+  return `parent=${window.location.hostname}`;
 }
 
 // ======================================================
