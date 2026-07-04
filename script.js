@@ -502,7 +502,6 @@ populateChatChannelSelect = function () {
     tomSelectInstance.setValue(current, true);
   }
 };
-//
 
 // ======================================================
 // Init
