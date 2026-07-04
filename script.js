@@ -796,6 +796,4 @@ populateChatChannelSelect = function () {
   }
 };
 
-if (typeof TomSelect !== "undefined") {
-  initTomSelect();
-}
+initTomSelect();
