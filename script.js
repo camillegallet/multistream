@@ -3,8 +3,6 @@
 // Part 1 - Initialization & Channel Management
 // ======================================================
 
-const STORAGE_KEY = "multistream_channels";
-
 const streamsContainer = document.getElementById("streams");
 const template = document.getElementById("streamTemplate");
 
@@ -42,32 +40,17 @@ function unique(array) {
 // Storage
 // ======================================================
 
-function saveChannels() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(channels));
-}
-
 function loadChannels() {
   // Read from path: /streamer1/streamer2
   // (requires a server with SPA fallback, like server.py)
-  const fromPath = location.pathname
-    .split("/")
-    .filter(Boolean)
-    .map(normalizeChannel)
-    .filter(Boolean)
-    .filter((ch) => ch !== "multistream" && ch !== "index.html");
-
-  if (fromPath.length > 0) return unique(fromPath);
-
-  // Fallback: localStorage
-  const saved = localStorage.getItem(STORAGE_KEY);
-
-  if (!saved) return [];
-
-  try {
-    return unique(JSON.parse(saved));
-  } catch {
-    return [];
-  }
+  return unique(
+    location.pathname
+      .split("/")
+      .filter(Boolean)
+      .map(normalizeChannel)
+      .filter(Boolean)
+      .filter((ch) => ch !== "multistream" && ch !== "index.html"),
+  );
 }
 
 // ======================================================
@@ -100,7 +83,6 @@ function render() {
 
 function syncState() {
   updateGrid();
-  saveChannels();
   updateURL();
   populateChatChannelSelect();
   rebuildChatFrames();
@@ -785,13 +767,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ======================================================
-
-// SAVE ON UNLOAD (extra safety)
-// ======================================================
-
-window.addEventListener("beforeunload", () => {
-  saveChannels();
-});
 
 const globalChat = document.getElementById("globalChat");
 
