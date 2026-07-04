@@ -41,18 +41,15 @@ function unique(array) {
 // ======================================================
 
 function loadChannels() {
-  // Read from path: /streamer1/streamer2
-  // (requires a server with SPA fallback, like server.py)
   return unique(
     location.pathname
       .split("/")
       .filter(Boolean)
+      .slice(1) // 👈 REMOVE "forsa"
       .map(normalizeChannel)
-      .filter(Boolean)
-      .filter((ch) => ch !== "multistream" && ch !== "index.html"),
+      .filter(Boolean),
   );
 }
-
 // ======================================================
 // URL
 // ======================================================
@@ -487,11 +484,9 @@ populateChatChannelSelect = function () {
 
 channels = loadChannels();
 
-initTomSelect();
 render();
-
-initTomSelect();
 populateChatChannelSelect();
+initTomSelect();
 
 // Show first channel's chat frame by default
 if (channels.length > 0) {
@@ -507,7 +502,17 @@ channelInput.focus();
 // ======================================================
 
 function twitchParents() {
-  return `parent=${window.location.hostname}`;
+  const hosts = [];
+
+  const hostname = window.location.hostname;
+
+  if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
+    hosts.push(hostname);
+  } else {
+    hosts.push("localhost");
+  }
+
+  return hosts.map((h) => `parent=${encodeURIComponent(h)}`).join("&");
 }
 
 // ======================================================
