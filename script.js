@@ -775,3 +775,14 @@ function openChat(channel) {
 
 // Expose openChat globally so stream cards can use it
 window.openChat = openChat;
+
+function initSelect() {
+  const el = document.querySelector("#chatChannelSelect");
+  if (!el) return;
+
+  new TomSelect(el, {
+    create: false,
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initSelect);
