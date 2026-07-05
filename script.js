@@ -485,7 +485,7 @@ populateChatChannelSelect = function () {
         ? activeChannel
         : channels[0]) || "";
 
-    tomSelectInstance.setValue(target, false);
+    tomSelectInstance.setValue(target, true);
     chatChannelSelect.value = target;
   } else {
     // No TomSelect — fall back to native select manipulation
@@ -512,7 +512,7 @@ const initTarget =
     ? activeChannel
     : channels[0]) || "";
 if (tomSelectInstance) {
-  tomSelectInstance.setValue(initTarget, false);
+  tomSelectInstance.setValue(initTarget, true);
 }
 
 // Show first channel's chat frame by default
