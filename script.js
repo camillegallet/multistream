@@ -451,38 +451,45 @@ function initTomSelect() {
 const _origPopulateChatChannelSelect = populateChatChannelSelect;
 
 populateChatChannelSelect = function () {
-  _origPopulateChatChannelSelect();
+  if (tomSelectInstance) {
+    // Use TomSelect API directly — skip native select manipulation
+    // to avoid triggering TomSelect's mutation observer mid-update.
 
-  if (!tomSelectInstance) return;
-
-  // Remove all channel options but keep the empty/placeholder option
-  Object.keys(tomSelectInstance.options).forEach((key) => {
-    if (key !== "") {
-      tomSelectInstance.removeOption(key, true);
-    }
-  });
-
-  // Ensure the empty option is always first
-  tomSelectInstance.addOption({
-    value: "",
-    text: "— Select a channel —",
-    $order: 0,
-  });
-
-  channels.forEach((channel, i) => {
-    tomSelectInstance.addOption({
-      value: channel,
-      text: channel,
-      $order: i + 1,
+    // Remove all channel options but keep the empty/placeholder option
+    Object.keys(tomSelectInstance.options).forEach((key) => {
+      if (key !== "") {
+        tomSelectInstance.removeOption(key, true);
+      }
     });
-  });
 
-  tomSelectInstance.refreshOptions(false);
+    // Ensure the empty option is always first
+    tomSelectInstance.addOption({
+      value: "",
+      text: "— Select a channel —",
+      $order: 0,
+    });
 
-  // Restore selected value
-  const current = chatChannelSelect.value;
-  if (current) {
-    tomSelectInstance.setValue(current, true);
+    channels.forEach((channel, i) => {
+      tomSelectInstance.addOption({
+        value: channel,
+        text: channel,
+        $order: i + 1,
+      });
+    });
+
+    tomSelectInstance.refreshOptions(false);
+
+    // Restore the appropriate selected value
+    const target =
+      (activeChannel && channels.includes(activeChannel)
+        ? activeChannel
+        : channels[0]) || "";
+
+    tomSelectInstance.setValue(target, false);
+    chatChannelSelect.value = target;
+  } else {
+    // No TomSelect — fall back to native select manipulation
+    _origPopulateChatChannelSelect();
   }
 };
 
@@ -493,11 +500,20 @@ populateChatChannelSelect = function () {
 
 channels = loadChannels();
 
-initTomSelect();
+// Populate native select first (TomSelect not active yet — falls back to native path)
 render();
 
+// Now initialize TomSelect from the already-populated native select
 initTomSelect();
-populateChatChannelSelect();
+
+// Sync TomSelect selection to match the native select's value
+const initTarget =
+  (activeChannel && channels.includes(activeChannel)
+    ? activeChannel
+    : channels[0]) || "";
+if (tomSelectInstance) {
+  tomSelectInstance.setValue(initTarget, false);
+}
 
 // Show first channel's chat frame by default
 if (channels.length > 0) {
