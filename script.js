@@ -115,6 +115,15 @@ function addChannels(list) {
     }
   });
 
+  // Ensure all cards follow the channels array order
+  // (resets any order values set by rotateChannels)
+  channels.forEach((ch, i) => {
+    const card = streamsContainer.querySelector(
+      `.stream-card[data-channel="${ch}"]`,
+    );
+    if (card) card.style.order = i;
+  });
+
   syncState();
 
   // Show chat frame for the selected channel if chat panel is visible
