@@ -455,8 +455,14 @@ populateChatChannelSelect = function () {
 
   if (!tomSelectInstance) return;
 
-  // Sync options with TomSelect
-  tomSelectInstance.clearOptions();
+  // Remove all channel options but keep the empty/placeholder option
+  Object.keys(tomSelectInstance.options).forEach((key) => {
+    if (key !== "") {
+      tomSelectInstance.removeOption(key, true);
+    }
+  });
+
+  // Ensure the empty option is always first
   tomSelectInstance.addOption({
     value: "",
     text: "— Select a channel —",
