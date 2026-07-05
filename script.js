@@ -84,8 +84,8 @@ function render() {
 function syncState() {
   updateGrid();
   updateURL();
-  populateChatChannelSelect();
   rebuildChatFrames();
+  populateChatChannelSelect();
   lucide.createIcons();
   toggleEmptyState();
 }
