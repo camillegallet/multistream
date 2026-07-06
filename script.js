@@ -594,12 +594,15 @@ function createStreamCard(channel) {
 
   player.src = `${playerBase}${channel}&${twitchParents()}&autoplay=true&muted=true`;
 
-  // Reload
+  // Reload (doesn't autoplay — user must press play manually)
   reloadBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     const src = player.src;
     player.src = "";
-    setTimeout(() => (player.src = src), 100);
+    setTimeout(
+      () => (player.src = src.replace("autoplay=true", "autoplay=false")),
+      100,
+    );
   });
 
   // Open chat on click
