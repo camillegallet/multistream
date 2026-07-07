@@ -701,6 +701,10 @@ function createStreamCard(channel) {
     if (globalChat && !globalChat.classList.contains("hidden")) {
       showChatFrame(newName);
       if (chatChannelSelect) chatChannelSelect.value = newName;
+      // Sync TomSelect if active
+      if (tomSelectInstance) {
+        tomSelectInstance.setValue(newName, true);
+      }
     }
   });
 
@@ -802,6 +806,11 @@ function openChat(channel) {
 
   if (chatChannelSelect) {
     chatChannelSelect.value = channel;
+  }
+
+  // Sync TomSelect if active
+  if (tomSelectInstance) {
+    tomSelectInstance.setValue(channel, true);
   }
 
   syncChatLayout();
