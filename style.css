@@ -347,6 +347,24 @@ iframe {
   border-color: #9147ff;
 }
 
+/* TomSelect chevron icon */
+.ts-chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #adadb8;
+  width: 16px;
+  height: 16px;
+  z-index: 1;
+}
+
+/* Make room for the chevron inside ts-control */
+.ts-wrapper .ts-control {
+  padding-right: 32px !important;
+}
+
 .chat-frames-container {
   flex: 1;
 
@@ -589,7 +607,7 @@ iframe {
   color: #efeff1;
 }
 
-/* Caret arrow */
+/* Hide default caret — using Lucide chevron instead */
 .ts-wrapper .ts-control::after {
-  border-color: rgba(255, 255, 255, 0.6) transparent transparent transparent;
+  display: none !important;
 }

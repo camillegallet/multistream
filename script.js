@@ -454,6 +454,18 @@ function initTomSelect() {
       syncChatLayout();
     },
   });
+
+  // Inject Lucide chevron icon into the TomSelect control
+  const control = tomSelectInstance.wrapper.querySelector(".ts-control");
+  if (control && !control.querySelector(".ts-chevron")) {
+    const chevron = document.createElement("i");
+    chevron.className = "ts-chevron";
+    chevron.setAttribute("data-lucide", "chevron-down");
+    control.appendChild(chevron);
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
+  }
 }
 
 // Override populateChatChannelSelect to sync TomSelect
