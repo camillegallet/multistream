@@ -141,7 +141,23 @@ function removeChannel(channel) {
   );
   if (card) card.remove();
 
+  // If the removed channel's chat was showing, fall back to the first remaining channel
+  if (activeChannel === channel) {
+    activeChannel = channels[0] || null;
+  }
+
   syncState();
+
+  // Ensure chat shows the fallback channel if the panel is open
+  if (
+    globalChat &&
+    !globalChat.classList.contains("hidden") &&
+    channels.length > 0
+  ) {
+    showChatFrame(channels[0]);
+    if (chatChannelSelect) chatChannelSelect.value = channels[0];
+    if (tomSelectInstance) tomSelectInstance.setValue(channels[0], true);
+  }
 }
 
 function clearChannels() {
