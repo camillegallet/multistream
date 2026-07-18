@@ -421,7 +421,7 @@ function updateGrid() {
     cards[3].style.gridRow = "2";
     cards[4].style.gridColumn = "5 / span 2";
     cards[4].style.gridRow = "2";
-    streamsContainer.style.gridTemplateRows = "";
+    streamsContainer.style.gridTemplateRows = "1fr 0.55fr";
   } else {
     streamsContainer.style.gridTemplateRows = "";
   }
