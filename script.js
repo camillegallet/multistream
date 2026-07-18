@@ -409,10 +409,10 @@ function updateGrid() {
     cards.sort(
       (a, b) => (parseInt(a.style.order) || 0) - (parseInt(b.style.order) || 0),
     );
-    // Row 1: items span 2 columns each (same width as bottom row)
-    cards[0].style.gridColumn = "2 / span 2";
+    // Row 1: items span 3 columns each (fill full width)
+    cards[0].style.gridColumn = "1 / span 3";
     cards[0].style.gridRow = "1";
-    cards[1].style.gridColumn = "4 / span 2";
+    cards[1].style.gridColumn = "4 / span 3";
     cards[1].style.gridRow = "1";
     // Row 2: each item spans 2 columns to fill full width
     cards[2].style.gridColumn = "1 / span 2";
